@@ -3,6 +3,10 @@ const engine = new BABYLON.Engine(canvas, true);
 var scrollIndex = 0;
 var prevPosX;
 var prevPosZ;
+var x = 1;
+var y = 1;
+var z = 1;
+
 
 function scroll(event, array) { 
     const sign = Math.sign(event.deltaY);
@@ -42,7 +46,7 @@ var createScene = function () {
     var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
 
     // Default intensity is 1. Let's dim the light a small amount
-    light.intensity = 0.7;
+    light.intensity = 1;
 
     scene.enablePhysics(new BABYLON.Vector3(0,-9.81, 0), new BABYLON.AmmoJSPlugin());	
 
@@ -85,34 +89,42 @@ var createScene = function () {
         new BABYLON.Vector3(0, 0, 10),
   ];
 
-    const hole = [ new BABYLON.Vector3(6, 0, 10),
+    const hole1 = [ new BABYLON.Vector3(6, 0, 10),
         new BABYLON.Vector3(6, 1.5, 10),
         new BABYLON.Vector3(4, 1.5, 10),
         new BABYLON.Vector3(4, 0, 10),
     ];
     
 
-    const hole1 = [ new BABYLON.Vector2(7, 0, 10),
+    const hole2 = [ new BABYLON.Vector2(7, 0, 10),
         new BABYLON.Vector2(7, 0.7, 10),
         new BABYLON.Vector2(3, 0.7, 10),
         new BABYLON.Vector2(3, 0, 10),
     ];
 
-    var obs1 = -20;
-    var obs2 = -50;
-    // var obstacle_poly3 = new BABYLON.PolygonMeshBuilder("obstacle3", corners, scene);
-    // obstacle_poly3.addHole(hole);
-    // var obstacle3 = obstacle_poly3.build(null, 0);
-    // obstacle3.position.y = 0;
-    // obstacle3.position.x = 5;
-    // obstacle3.position.z = obs3;
-    // obstacle3.rotation.x = BABYLON.Tools.ToRadians(270);
-    // obstacle3.rotation.y = BABYLON.Tools.ToRadians(180);
+    const hole3 = [ new BABYLON.Vector3(6, 0, 10),
+        new BABYLON.Vector3(6, 3, 10),
+        new BABYLON.Vector3(4, 3, 10),
+        new BABYLON.Vector3(4, 0, 10),
+    ];
 
-    // obstacle3.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle3, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
+    var obs1 = -30;
+    var obs2 = -60;
+    var obs3 = -100;
 
-    const obstacleMaterial = new BABYLON.StandardMaterial("obstacleMaterial");
-    obstacleMaterial.emissiveTexture = obstacleMaterial.diffuseTexture = new BABYLON.Texture("textures/rock.png", scene); 
+
+
+    // const obstacleMaterial = new BABYLON.StandardMaterial("obstacleMaterial");
+    // obstacleMaterial.emissiveTexture = obstacleMaterial.diffuseTexture = new BABYLON.Texture("textures/rock.png", scene);
+
+    const obstacleMaterial1 = new BABYLON.StandardMaterial("obstacleMaterial1");
+    obstacleMaterial1.diffuseColor = new BABYLON.Color3(1, 1, 0);
+
+    const obstacleMaterial2 = new BABYLON.StandardMaterial("obstacleMaterial2");
+    obstacleMaterial2.diffuseColor = new BABYLON.Color3(0, 1, 1);
+
+    const obstacleMaterial3 = new BABYLON.StandardMaterial("obstacleMaterial3");
+    obstacleMaterial3.diffuseColor = new BABYLON.Color3(0, 0.5, 1);
     
     const sphereMaterial = new BABYLON.StandardMaterial("sphereMaterial");
     sphereMaterial.diffuseTexture = new BABYLON.Texture("textures/rock.png", scene); 
@@ -137,10 +149,10 @@ var createScene = function () {
 
     obstacle1.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle1, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
        
-    obstacle1.material = obstacleMaterial;
+    obstacle1.material = obstacleMaterial1;
 
     var obstacle_poly2 = new BABYLON.PolygonMeshBuilder("obstacle2", corners, scene);
-    obstacle_poly2.addHole(hole1);
+    obstacle_poly2.addHole(hole2);
     var obstacle2 = obstacle_poly2.build(null, 0);
     obstacle2.position.y = 0;
     obstacle2.position.x = 5;
@@ -150,8 +162,20 @@ var createScene = function () {
 
     obstacle2.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle2, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
 
-    obstacle2.material = obstacleMaterial;
+    obstacle2.material = obstacleMaterial2;
 
+    var obstacle_poly3 = new BABYLON.PolygonMeshBuilder("obstacle3", corners, scene);
+    obstacle_poly3.addHole(hole3);
+    var obstacle3 = obstacle_poly3.build(null, 0);
+    obstacle3.position.y = 0;
+    obstacle3.position.x = 5;
+    obstacle3.position.z = obs3;
+    obstacle3.rotation.x = BABYLON.Tools.ToRadians(270);
+    obstacle3.rotation.y = BABYLON.Tools.ToRadians(180);
+
+    obstacle3.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle3, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
+
+    obstacle3.material = obstacleMaterial3;
 
     var player = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
     player.material = sphereMaterial;
@@ -161,7 +185,7 @@ var createScene = function () {
         alert("collided")
     });
     player.position.y = 1/2;
-    player.position.z = -1;
+    player.position.z = 0;
 
     
 
@@ -274,6 +298,36 @@ var createScene = function () {
             player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(0, 0, -5));
         } else {
             camera.position.y = player.position.y
+        }
+
+        // if(Math.abs(player.position.z) > (x*35)) {
+        //     obstacle1.position.z = -[(x*100)+30];
+        //     // obstacle3.position.z = -[(x*100)+100];
+
+        //     x++;
+        // } else if(Math.abs(player.position.z) > (y*65)) {
+        //     obstacle2.position.z = -[(y*100)+60];
+        //     y++;
+
+        // } else if(Math.abs(player.position.z) > (z*105)) {
+        //     obstacle3.position.z = -[(z*100)+100];
+        //     z++;
+        // }
+
+        if(Math.abs(player.position.z) > [Math.abs(obs1) + 5]) {
+            obs1 = -[(x*100)+30];
+            obstacle1.position.z = obs1;
+            x++;
+
+        } else if(Math.abs(player.position.z) > [Math.abs(obs2) + 5]) {
+            obs2 = -[(y*100)+60];
+            obstacle2.position.z = obs2;
+            y++;
+
+        } else if(Math.abs(player.position.z) > [Math.abs(obs3) + 5]) {
+            obs3 = -[(z*100)+100];
+            obstacle3.position.z = obs3;
+            z++;
         }
     
 
