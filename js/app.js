@@ -8,6 +8,7 @@ var x = 1;
 var y = 1;
 var z = 1;
 var score = 0;
+var gameOver = false;
 
 
 function scroll(event, array) { 
@@ -24,8 +25,22 @@ function scroll(event, array) {
 
 }
 
+function registerCollision(player, obstacle1, obstacle2, obstacle3) {
+
+    player.physicsImpostor.registerOnPhysicsCollide(obstacle1.physicsImpostor, function(main, collided) { 
+        gameOver();
+    });
+    player.physicsImpostor.registerOnPhysicsCollide(obstacle2.physicsImpostor, function(main, collided) { 
+        gameOver();
+    });
+    player.physicsImpostor.registerOnPhysicsCollide(obstacle3.physicsImpostor, function(main, collided) { 
+        gameOver();
+    });
+}
+
 function gameOver() {
-    alert("Game Over");
+
+    gameOver = true;
 }
 
 var createScene = function () {
@@ -166,11 +181,10 @@ var createScene = function () {
     player.material = sphereMaterial;
 
     player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9, friction: 0.5}, scene);
-    player.physicsImpostor.registerOnPhysicsCollide(obstacle1.physicsImpostor, function(main, collided) {
-        alert("collided")
-    });
+    registerCollision(player, obstacle1, obstacle2, obstacle3);
     player.position.y = 1/2;
     player.position.z = 0;
+    player.position.x = 0;
 
     window.addEventListener("wheel", event => {
         const shapes = ['sphere', 'box', 'cylinder' ,'rectangle'];
@@ -185,10 +199,8 @@ var createScene = function () {
             player.material = sphereMaterial;
 
             player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9}, scene);
-            player.physicsImpostor.registerOnPhysicsCollide(obstacle1.physicsImpostor, function(main, collided) {
-            
-                alert("collided");
-            });
+            registerCollision(player, obstacle1, obstacle2, obstacle3);
+
             player.position.x = prevPosX;
             player.position.z = prevPosZ;
             player.position.y = 1/2;
@@ -202,10 +214,7 @@ var createScene = function () {
             player.material = boxMaterial;
 
             player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0}, scene);
-            player.physicsImpostor.registerOnPhysicsCollide(obstacle1.physicsImpostor, function(main, collided) {
-            
-                alert("collided");
-            });
+            registerCollision(player, obstacle1, obstacle2, obstacle3);
 
             player.position.x = prevPosX;
             player.position.z = prevPosZ;
@@ -221,10 +230,7 @@ var createScene = function () {
             player.material = cylindricalMaterial;
 
             player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0}, scene);
-            player.physicsImpostor.registerOnPhysicsCollide(obstacle1.physicsImpostor, function(main, collided) {
-            
-                alert("collided");
-            });
+            registerCollision(player, obstacle1, obstacle2, obstacle3);
 
             player.position.x = prevPosX;
             player.position.z = prevPosZ;
@@ -239,10 +245,8 @@ var createScene = function () {
             player = BABYLON.MeshBuilder.CreateBox("rectangle", {width:0.5, height: 2}, scene);
             player.material = rectangleMaterial;
             player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0, friction: 0}, scene);
-            player.physicsImpostor.registerOnPhysicsCollide(obstacle1.physicsImpostor, function(main, collided) {
-            
-                alert("collided");
-            });
+            registerCollision(player, obstacle1, obstacle2, obstacle3);
+
             player.position.x = prevPosX;
             player.position.z = prevPosZ;
             player.position.y = 1;
@@ -296,12 +300,12 @@ var createScene = function () {
         camera.position.z = player.position.z+7;
 
         if(inputMap["a"]) {
-            player.position.x += 0.1;
-            // player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(3, 0, -5));
+            // player.position.x += 0.1;
+            player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(3, 0, -5));
         }  
         if(inputMap["d"]) {
-            player.position.x -= 0.1;
-            // player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(-3, 0, -5));
+            // player.position.x -= 0.1;
+            player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(-3, 0, -5));
         }
 
     });
@@ -313,7 +317,11 @@ var createScene = function () {
 const scene =  createScene(); 
 
 engine.runRenderLoop(function () {
-    scene.render();
+
+    if(!gameOver) {
+        scene.render();
+    }
+
 });
 
 window.addEventListener("resize", function () {
