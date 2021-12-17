@@ -1,6 +1,9 @@
 const canvas = document.getElementById("renderCanvas"); 
 const scoreElement = document.getElementById("score");
 const engine = new BABYLON.Engine(canvas, true); 
+var mouseScrollSound; 
+var collisionSound; 
+var music;
 var scrollIndex = 0;
 var prevPosX;
 var prevPosZ;
@@ -8,7 +11,7 @@ var x = 1;
 var y = 1;
 var z = 1;
 var score = 0;
-var gameOver = false;
+var isGameOver = false;
 
 
 function scroll(event, array) { 
@@ -40,7 +43,10 @@ function registerCollision(player, obstacle1, obstacle2, obstacle3) {
 
 function gameOver() {
 
-    gameOver = true;
+    music.stop(0);
+    mouseScrollSound = undefined;
+    collisionSound.play();
+    isGameOver = true;
 }
 
 var createScene = function () {
@@ -60,10 +66,10 @@ var createScene = function () {
     var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 10, height: 50}, scene);
     ground.scaling = new BABYLON.Vector3(1, 1, -30);
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9}, scene);
-	
+    
     const groundMaterial = new BABYLON.StandardMaterial("groundMaterial");
     groundMaterial.diffuseTexture = new BABYLON.Texture("textures/grassn.png", scene);   
-       
+    
     ground.material = groundMaterial;
 
     var skyboxMaterial = new BABYLON.SkyMaterial("skyMaterial", scene);
@@ -71,28 +77,28 @@ var createScene = function () {
 
     var skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, scene);
     skybox.material = skyboxMaterial;
-	
-	var setSkyConfig = function (property, from, to) {
-		var keys = [
+    
+    var setSkyConfig = function (property, from, to) {
+        var keys = [
             { frame: 0, value: from },
-			{ frame: 100, value: to }
+            { frame: 100, value: to }
         ];
-		
-		var animation = new BABYLON.Animation("animation", property, 100, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-		animation.setKeys(keys);
-		
-		scene.stopAnimation(skybox);
-		scene.beginDirectAnimation(skybox, [animation], 0, 100, false, 1);
-	};
+        
+        var animation = new BABYLON.Animation("animation", property, 100, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        animation.setKeys(keys);
+        
+        scene.stopAnimation(skybox);
+        scene.beginDirectAnimation(skybox, [animation], 0, 100, false, 1);
+    };
 
-	// Set to Day
-	setSkyConfig("material.inclination", skyboxMaterial.inclination, 0);
+    // Set to Day
+    setSkyConfig("material.inclination", skyboxMaterial.inclination, 0);
 
     const corners = [ new BABYLON.Vector3(10, 0, 10),
         new BABYLON.Vector3(10, 7, 10),
         new BABYLON.Vector3(0, 7, 10),
         new BABYLON.Vector3(0, 0, 10),
-  ];
+];
 
     const hole1 = [ new BABYLON.Vector3(6, 0, 10),
         new BABYLON.Vector3(6, 1.5, 10),
@@ -137,7 +143,11 @@ var createScene = function () {
 
     const rectangleMaterial = new BABYLON.StandardMaterial("rectangleMaterial");
     rectangleMaterial.diffuseTexture = new BABYLON.Texture("textures/lavalite.jpg", scene); 
-
+ 
+    mouseScrollSound = new BABYLON.Sound("mouseScrollSound", "sound/mouse-scroll.wav", scene); 
+    collisionSound = new BABYLON.Sound("collisionSound", "sound/collision.wav", scene);   
+    music = new BABYLON.Sound("music", "sound/bg.mp3", scene, null, { loop: true, autoplay: true, volume:0.1 });
+    
     var obstacle_poly1 = new BABYLON.PolygonMeshBuilder("obstacle1", corners, scene);
     obstacle_poly1.addHole(hole1);
     var obstacle1 = obstacle_poly1.build(null, 0);
@@ -148,7 +158,7 @@ var createScene = function () {
     obstacle1.rotation.y = BABYLON.Tools.ToRadians(180);
 
     obstacle1.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle1, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
-       
+    
     obstacle1.material = obstacleMaterial1;
 
     var obstacle_poly2 = new BABYLON.PolygonMeshBuilder("obstacle2", corners, scene);
@@ -187,6 +197,10 @@ var createScene = function () {
     player.position.x = 0;
 
     window.addEventListener("wheel", event => {
+        
+        if(mouseScrollSound != undefined) {
+            mouseScrollSound.play();
+        }
         const shapes = ['sphere', 'box', 'cylinder' ,'rectangle'];
         scroll(event, shapes);
 
@@ -253,9 +267,6 @@ var createScene = function () {
         }
     });
 
-
-   
-
     var inputMap ={};
     scene.actionManager = new BABYLON.ActionManager(scene);
     scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {								
@@ -273,7 +284,8 @@ var createScene = function () {
         if(player.position.x > -5 && player.position.x < 5) {
             player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(0, 0, -5));
         } else {
-            camera.position.y = player.position.y
+            // camera.position.y = player.position.y
+            gameOver();
         }
 
         if(Math.abs(player.position.z) > [Math.abs(obs1) + 5]) {
@@ -318,8 +330,15 @@ const scene =  createScene();
 
 engine.runRenderLoop(function () {
 
-    if(!gameOver) {
+    if(!isGameOver) {
         scene.render();
+    
+    } else if(isGameOver) {
+        document.getElementById("start").style.display = "block"; 
+        var style = "top:10%;left:40%;font-size:20px;background-color:#2A2F30; hover:background: #2FA2C4; width: 300px; height:100px; border-radius: 40px;";
+        document.getElementById("scoreCard").style.cssText = style;
+        document.getElementsByClassName("sc")[0].style.cssText = "color:#fff; padding-left:90px; font-size: 30px;position: absolute; top: 25%";
+        document.getElementsByClassName("sc")[1].style.cssText = "color:#fff; padding-left:0px; font-size: 30px;position: absolute; top: 25%; left:57%";
     }
 
 });
@@ -327,3 +346,4 @@ engine.runRenderLoop(function () {
 window.addEventListener("resize", function () {
     engine.resize();
 });
+
