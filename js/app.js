@@ -12,6 +12,9 @@ var y = 1;
 var z = 1;
 var score = 0;
 var isGameOver = false;
+var xVelocityPos = 3;
+var xVelocityNeg = -3;
+var zVelocity = -5; 
 
 
 function scroll(event, array) { 
@@ -281,8 +284,13 @@ var createScene = function () {
 
         scoreElement.innerText = score;
 
+        if((score+1) % 5 == 0) {
+            zVelocity -= 0.02;
+
+        }
+
         if(player.position.x > -5 && player.position.x < 5) {
-            player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(0, 0, -5));
+            player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(0, 0, zVelocity));
         } else {
             // camera.position.y = player.position.y
             gameOver();
@@ -313,11 +321,11 @@ var createScene = function () {
 
         if(inputMap["a"]) {
             // player.position.x += 0.1;
-            player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(3, 0, -5));
+            player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(xVelocityPos, 0, zVelocity));
         }  
         if(inputMap["d"]) {
             // player.position.x -= 0.1;
-            player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(-3, 0, -5));
+            player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(xVelocityNeg, 0, zVelocity));
         }
 
     });
