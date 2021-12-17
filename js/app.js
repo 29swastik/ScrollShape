@@ -71,7 +71,8 @@ var createScene = function () {
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9}, scene);
     
     const groundMaterial = new BABYLON.StandardMaterial("groundMaterial");
-    groundMaterial.diffuseTexture = new BABYLON.Texture("textures/grassn.png", scene);   
+    // groundMaterial.diffuseTexture = new BABYLON.Texture("textures/grassn.png", scene);   
+    groundMaterial.diffuseTexture = new BABYLON.Texture("textures/road-min.jpg", scene);   
     
     ground.material = groundMaterial;
 
@@ -121,6 +122,8 @@ var createScene = function () {
         new BABYLON.Vector3(6.5, 3, 10),
         new BABYLON.Vector3(6.5, 0, 10),
     ];
+
+    
 
     var obs1 = -30;
     var obs2 = -60;
@@ -347,8 +350,9 @@ engine.runRenderLoop(function () {
         document.getElementById("start").style.display = "block"; 
         var style = "top:10%;left:40%;font-size:20px;background-color:#2A2F30; hover:background: #2FA2C4; width: 300px; height:100px; border-radius: 40px;";
         document.getElementById("scoreCard").style.cssText = style;
-        document.getElementsByClassName("sc")[0].style.cssText = "color:#fff; padding-left:90px; font-size: 30px;position: absolute; top: 25%";
-        document.getElementsByClassName("sc")[1].style.cssText = "color:#fff; padding-left:0px; font-size: 30px;position: absolute; top: 25%; left:57%";
+        document.getElementById("score").innerText = "Score: " + score;
+        document.getElementById("score").style.cssText = "color:#fff; padding-left:0px; font-size: 30px;position: absolute; top: 25%; left:20%";
+        
     }
 
 });
