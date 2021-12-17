@@ -62,7 +62,7 @@ var createScene = function () {
 
     var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
 
-    light.intensity = 1.2;
+    light.intensity = 1.5;
 
     scene.enablePhysics(new BABYLON.Vector3(0,-9.81, 0), new BABYLON.AmmoJSPlugin());	
 
