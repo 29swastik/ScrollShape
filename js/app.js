@@ -67,7 +67,7 @@ var createScene = function () {
     scene.enablePhysics(new BABYLON.Vector3(0,-9.81, 0), new BABYLON.AmmoJSPlugin());	
 
     var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 10, height: 50}, scene);
-    ground.scaling = new BABYLON.Vector3(1, 1, -30);
+    ground.scaling = new BABYLON.Vector3(1, 1, -50);
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9}, scene);
     
     const groundMaterial = new BABYLON.StandardMaterial("groundMaterial");
@@ -78,7 +78,7 @@ var createScene = function () {
     var skyboxMaterial = new BABYLON.SkyMaterial("skyMaterial", scene);
     skyboxMaterial.backFaceCulling = false;
 
-    var skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, scene);
+    var skybox = BABYLON.Mesh.CreateBox("skyBox", 5000.0,  scene);
     skybox.material = skyboxMaterial;
     
     var setSkyConfig = function (property, from, to) {
@@ -142,7 +142,7 @@ var createScene = function () {
     boxMaterial.diffuseTexture = new BABYLON.Texture("textures/bloc.jpg", scene); 
 
     const cylindricalMaterial = new BABYLON.StandardMaterial("cylindricalMaterial");
-    cylindricalMaterial.diffuseTexture = new BABYLON.Texture("textures/floor_bump.png", scene); 
+    cylindricalMaterial.diffuseTexture = new BABYLON.Texture("textures/sand.jpg", scene); 
 
     const rectangleMaterial = new BABYLON.StandardMaterial("rectangleMaterial");
     rectangleMaterial.diffuseTexture = new BABYLON.Texture("textures/lavalite.jpg", scene); 
@@ -284,8 +284,10 @@ var createScene = function () {
 
         scoreElement.innerText = score;
 
-        if((score+1) % 5 == 0) {
+        if((score+1) % 5 == 0 && score < 15) {
             zVelocity -= 0.02;
+            xVelocityPos += 0.005;
+            xVelocityNeg -= 0.005;
 
         }
 
