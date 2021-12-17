@@ -103,10 +103,10 @@ var createScene = function () {
         new BABYLON.Vector3(0, 0, 10),
 ];
 
-    const hole1 = [ new BABYLON.Vector3(6, 0, 10),
-        new BABYLON.Vector3(6, 1.5, 10),
+    const hole1 = [ new BABYLON.Vector3(4, 0, 10),
         new BABYLON.Vector3(4, 1.5, 10),
-        new BABYLON.Vector3(4, 0, 10),
+        new BABYLON.Vector3(2, 1.5, 10),
+        new BABYLON.Vector3(2, 0, 10),
     ];
     
 
@@ -116,10 +116,10 @@ var createScene = function () {
         new BABYLON.Vector2(3, 0, 10),
     ];
 
-    const hole3 = [ new BABYLON.Vector3(5.5, 0, 10),
-        new BABYLON.Vector3(5.5, 3, 10),
-        new BABYLON.Vector3(4.5, 3, 10),
-        new BABYLON.Vector3(4.5, 0, 10),
+    const hole3 = [ new BABYLON.Vector3(7.5, 0, 10),
+        new BABYLON.Vector3(7.5, 3, 10),
+        new BABYLON.Vector3(6.5, 3, 10),
+        new BABYLON.Vector3(6.5, 0, 10),
     ];
 
     var obs1 = -30;
