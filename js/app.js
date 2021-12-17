@@ -1,4 +1,5 @@
 const canvas = document.getElementById("renderCanvas"); 
+const scoreElement = document.getElementById("score");
 const engine = new BABYLON.Engine(canvas, true); 
 var scrollIndex = 0;
 var prevPosX;
@@ -6,6 +7,7 @@ var prevPosZ;
 var x = 1;
 var y = 1;
 var z = 1;
+var score = 0;
 
 
 function scroll(event, array) { 
@@ -260,8 +262,9 @@ var createScene = function () {
     }));
 
 
-    var pos = 20;
     scene.onBeforeRenderObservable.add(()=>{
+
+        scoreElement.innerText = score;
 
         if(player.position.x > -5 && player.position.x < 5) {
             player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(0, 0, -5));
@@ -272,16 +275,19 @@ var createScene = function () {
         if(Math.abs(player.position.z) > [Math.abs(obs1) + 5]) {
             obs1 = -[(x*100)+30];
             obstacle1.position.z = obs1;
+            score++;
             x++;
 
         } else if(Math.abs(player.position.z) > [Math.abs(obs2) + 5]) {
             obs2 = -[(y*100)+60];
             obstacle2.position.z = obs2;
+            score++;
             y++;
 
         } else if(Math.abs(player.position.z) > [Math.abs(obs3) + 5]) {
             obs3 = -[(z*100)+100];
             obstacle3.position.z = obs3;
+            score++;
             z++;
         }
 
@@ -299,8 +305,6 @@ var createScene = function () {
         }
 
     });
-
-
 
     return scene;
 };
