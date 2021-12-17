@@ -1,4 +1,7 @@
 const canvas = document.getElementById("renderCanvas"); 
+canvas.addEventListener('click', function() {
+    // alert('You\'ve clicked me');
+   });
 const scoreElement = document.getElementById("score");
 const engine = new BABYLON.Engine(canvas, true); 
 var mouseScrollSound; 
@@ -14,7 +17,7 @@ var score = 0;
 var isGameOver = false;
 var xVelocityPos = 3;
 var xVelocityNeg = -3;
-var zVelocity = -5; 
+var zVelocity = 0; 
 
 
 function scroll(event, array) { 
@@ -152,7 +155,7 @@ var createScene = function () {
  
     mouseScrollSound = new BABYLON.Sound("mouseScrollSound", "sound/mouse-scroll.wav", scene); 
     collisionSound = new BABYLON.Sound("collisionSound", "sound/collision.wav", scene);   
-    music = new BABYLON.Sound("music", "sound/bg.mp3", scene, null, { loop: true, autoplay: true, volume:0.1 });
+    music = new BABYLON.Sound("music", "sound/bg.mp3", scene, null, { loop: true, autoplay: true, volume:0.05 });
     
     var obstacle_poly1 = new BABYLON.PolygonMeshBuilder("obstacle1", corners, scene);
     obstacle_poly1.addHole(hole1);
@@ -274,6 +277,7 @@ var createScene = function () {
     });
 
     var inputMap ={};
+
     scene.actionManager = new BABYLON.ActionManager(scene);
     scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {								
         inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
@@ -281,6 +285,22 @@ var createScene = function () {
     scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {								
         inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
     }));
+
+    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+    var button = BABYLON.GUI.Button.CreateSimpleButton("but", "let's go");
+    button.width = "300px"
+    button.height = "100px";
+    button.color = "white";
+    button.cornerRadius = 20;
+    button.background = "gray";
+    button.fontSize = "40px";
+    button.onPointerUpObservable.add(function() {
+        button.dispose();
+        zVelocity = -5;
+    });
+    advancedTexture.addControl(button);  
+
 
 
     scene.onBeforeRenderObservable.add(()=>{
@@ -323,6 +343,7 @@ var createScene = function () {
         prevPosX = player.position.x;
         prevPosZ = player.position.z;
         camera.position.z = player.position.z+7;
+        // camera.position.x = player.position.x;
 
         if(inputMap["a"]) {
             // player.position.x += 0.1;
@@ -335,11 +356,14 @@ var createScene = function () {
 
     });
 
+
     return scene;
 };
 
 
 const scene =  createScene(); 
+
+// scene.render();
 
 engine.runRenderLoop(function () {
 
@@ -356,6 +380,7 @@ engine.runRenderLoop(function () {
     }
 
 });
+
 
 window.addEventListener("resize", function () {
     engine.resize();
