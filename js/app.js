@@ -1,7 +1,4 @@
 const canvas = document.getElementById("renderCanvas"); 
-canvas.addEventListener('click', function() {
-    // alert('You\'ve clicked me');
-   });
 const scoreElement = document.getElementById("score");
 const engine = new BABYLON.Engine(canvas, true); 
 var mouseScrollSound; 
@@ -18,6 +15,10 @@ var isGameOver = false;
 var xVelocityPos = 3;
 var xVelocityNeg = -3;
 var zVelocity = 0; 
+var isTempObstacleUsed = false;
+var obs1 = -30;
+var obs2 = -60;
+var obs3 = -100;
 
 
 function scroll(event, array) { 
@@ -45,6 +46,67 @@ function registerCollision(player, obstacle1, obstacle2, obstacle3) {
     player.physicsImpostor.registerOnPhysicsCollide(obstacle3.physicsImpostor, function(main, collided) { 
         gameOver();
     });
+}
+
+function registerTempObstacle(tempObstacle, player) {
+    player.physicsImpostor.registerOnPhysicsCollide(tempObstacle.physicsImpostor, function(main, collided) { 
+        gameOver();
+    });
+}
+
+function createObstacle1(corners, hole1, obstacleMaterial1, obstacleName, scene) {
+    var obstacle_poly1 = new BABYLON.PolygonMeshBuilder(obstacleName, corners, scene);
+    obstacle_poly1.addHole(hole1);
+    var obstacle1 = obstacle_poly1.build(null, 0);
+    obstacle1.position.y = 0;
+    obstacle1.position.x = 5;
+    obstacle1.position.z = obs1;
+    obstacle1.rotation.x = BABYLON.Tools.ToRadians(270);
+    obstacle1.rotation.y = BABYLON.Tools.ToRadians(180);
+
+    obstacle1.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle1, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
+    
+    obstacle1.material = obstacleMaterial1;
+
+    return obstacle1;
+}
+
+function createObstacle2(corners, hole2, obstacleMaterial2, obstacleName, scene) {
+
+    var obstacle_poly2 = new BABYLON.PolygonMeshBuilder(obstacleName, corners, scene);
+    obstacle_poly2.addHole(hole2);
+    var obstacle2 = obstacle_poly2.build(null, 0);
+    obstacle2.position.y = 0;
+    obstacle2.position.x = 5;
+    obstacle2.position.z = obs2;
+    obstacle2.rotation.x = BABYLON.Tools.ToRadians(270);
+    obstacle2.rotation.y = BABYLON.Tools.ToRadians(180);
+
+    obstacle2.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle2, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
+
+    obstacle2.material = obstacleMaterial2;
+
+    return obstacle2;
+    
+}
+
+function createObstacle3(corners, hole3, obstacleMaterial3, obstacleName, scene) {
+
+    var obstacle_poly3 = new BABYLON.PolygonMeshBuilder(obstacleName, corners, scene);
+    obstacle_poly3.addHole(hole3);
+    var obstacle3 = obstacle_poly3.build(null, 0);
+    obstacle3.position.y = 0;
+    obstacle3.position.x = 5;
+    obstacle3.position.z = obs3;
+    obstacle3.rotation.x = BABYLON.Tools.ToRadians(270);
+    obstacle3.rotation.y = BABYLON.Tools.ToRadians(180);
+
+    obstacle3.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle3, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
+
+    obstacle3.material = obstacleMaterial3;
+
+    return obstacle3;
+    
 }
 
 function gameOver() {
@@ -126,12 +188,6 @@ var createScene = function () {
         new BABYLON.Vector3(6.5, 0, 10),
     ];
 
-
-
-    var obs1 = -30;
-    var obs2 = -60;
-    var obs3 = -100;
-
     const obstacleMaterial1 = new BABYLON.StandardMaterial("obstacleMaterial1");
     obstacleMaterial1.diffuseColor = new BABYLON.Color3(1, 1, 0);
 
@@ -157,50 +213,23 @@ var createScene = function () {
     collisionSound = new BABYLON.Sound("collisionSound", "sound/collision.wav", scene);   
     music = new BABYLON.Sound("music", "sound/bg.mp3", scene, null, { loop: true, autoplay: true, volume:0.05 });
     
-    var obstacle_poly1 = new BABYLON.PolygonMeshBuilder("obstacle1", corners, scene);
-    obstacle_poly1.addHole(hole1);
-    var obstacle1 = obstacle_poly1.build(null, 0);
-    obstacle1.position.y = 0;
-    obstacle1.position.x = 5;
-    obstacle1.position.z = obs1;
-    obstacle1.rotation.x = BABYLON.Tools.ToRadians(270);
-    obstacle1.rotation.y = BABYLON.Tools.ToRadians(180);
+    var obstacle1 = createObstacle1(corners, hole1, obstacleMaterial1, "obstacle1", scene);
 
-    obstacle1.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle1, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
-    
-    obstacle1.material = obstacleMaterial1;
+    var obstacle2 = createObstacle2(corners, hole2, obstacleMaterial2, "obstacle2", scene);
 
-    var obstacle_poly2 = new BABYLON.PolygonMeshBuilder("obstacle2", corners, scene);
-    obstacle_poly2.addHole(hole2);
-    var obstacle2 = obstacle_poly2.build(null, 0);
-    obstacle2.position.y = 0;
-    obstacle2.position.x = 5;
-    obstacle2.position.z = obs2;
-    obstacle2.rotation.x = BABYLON.Tools.ToRadians(270);
-    obstacle2.rotation.y = BABYLON.Tools.ToRadians(180);
+    var obstacle3 = createObstacle3(corners, hole3, obstacleMaterial3, "obstacle3", scene);
 
-    obstacle2.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle2, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
+    var tempObstacle = createObstacle1(corners, hole1, obstacleMaterial1, "tempObstacle", scene);
+    tempObstacle.position.z = 30;
 
-    obstacle2.material = obstacleMaterial2;
-
-    var obstacle_poly3 = new BABYLON.PolygonMeshBuilder("obstacle3", corners, scene);
-    obstacle_poly3.addHole(hole3);
-    var obstacle3 = obstacle_poly3.build(null, 0);
-    obstacle3.position.y = 0;
-    obstacle3.position.x = 5;
-    obstacle3.position.z = obs3;
-    obstacle3.rotation.x = BABYLON.Tools.ToRadians(270);
-    obstacle3.rotation.y = BABYLON.Tools.ToRadians(180);
-
-    obstacle3.physicsImpostor = new BABYLON.PhysicsImpostor(obstacle3, BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: 0}, scene);
-
-    obstacle3.material = obstacleMaterial3;
 
     var player = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1.2, segments: 32}, scene);
     player.material = sphereMaterial;
 
     player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9, friction: 0.5}, scene);
     registerCollision(player, obstacle1, obstacle2, obstacle3);
+    registerTempObstacle(tempObstacle, player);
+
     player.position.y = 1/2;
     player.position.z = 0;
     player.position.x = 0;
@@ -223,7 +252,8 @@ var createScene = function () {
 
             player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9}, scene);
             registerCollision(player, obstacle1, obstacle2, obstacle3);
-
+            registerTempObstacle(tempObstacle, player);
+            
             player.position.x = prevPosX;
             player.position.z = prevPosZ;
             player.position.y = 1/2;
@@ -238,6 +268,7 @@ var createScene = function () {
 
             player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0}, scene);
             registerCollision(player, obstacle1, obstacle2, obstacle3);
+            registerTempObstacle(tempObstacle, player);
 
             player.position.x = prevPosX;
             player.position.z = prevPosZ;
@@ -254,6 +285,7 @@ var createScene = function () {
 
             player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0}, scene);
             registerCollision(player, obstacle1, obstacle2, obstacle3);
+            registerTempObstacle(tempObstacle, player);
 
             player.position.x = prevPosX;
             player.position.z = prevPosZ;
@@ -269,6 +301,7 @@ var createScene = function () {
             player.material = rectangleMaterial;
             player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0, friction: 0}, scene);
             registerCollision(player, obstacle1, obstacle2, obstacle3);
+            registerTempObstacle(tempObstacle, player);
 
             player.position.x = prevPosX;
             player.position.z = prevPosZ;
@@ -314,6 +347,13 @@ var createScene = function () {
 
         }
 
+        var relativePos = Math.abs(tempObstacle.position.z) - Math.abs(player.position.z);
+        if(relativePos < 5 && relativePos > 0) {
+            isTempObstacleUsed = false;
+            // alert("temp obstacle passed");
+            
+        }
+
         if(player.position.x > -5 && player.position.x < 5) {
             player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(0, 0, zVelocity));
         } else {
@@ -321,23 +361,87 @@ var createScene = function () {
             gameOver();
         }
 
+
         if(Math.abs(player.position.z) > [Math.abs(obs1) + 5]) {
+
+            var random = 1 + Math.floor(Math.random() * 3);
+            
             obs1 = -[(x*100)+30];
-            obstacle1.position.z = obs1;
             score++;
             x++;
+            if(random == 2 && !isTempObstacleUsed) {
+                // alert("renderring obstacle2 after passing obstacle1");
+                tempObstacle = createObstacle2(corners, hole2, obstacleMaterial2, "tempObstacle", scene);
+                tempObstacle.position.z = obs1;
+                isTempObstacleUsed = true;
+                registerTempObstacle(tempObstacle, player);
+            
+            } else if(random == 3 && !isTempObstacleUsed) {
+                // alert("renderring obstacle3 after passing obstacle1");
+                tempObstacle = createObstacle3(corners, hole3, obstacleMaterial3, "tempObstacle", scene);
+                tempObstacle.position.z = obs1;
+                isTempObstacleUsed = true;
+                registerTempObstacle(tempObstacle, player);
+            
+            } else {
+                // alert("renderring obstacle1 after passing obstacle1");
+                obstacle1.position.z = obs1;
+            }
 
         } else if(Math.abs(player.position.z) > [Math.abs(obs2) + 5]) {
+
+            var random = 1 + Math.floor(Math.random() * 3);
+
             obs2 = -[(y*100)+60];
-            obstacle2.position.z = obs2;
             score++;
             y++;
 
+            if(random == 1 && !isTempObstacleUsed) {
+                // alert("renderring obstacle1 after passing obstacle2");
+                tempObstacle = createObstacle1(corners, hole1, obstacleMaterial1, "tempObstacle", scene);
+                tempObstacle.position.z = obs2;
+                isTempObstacleUsed = true;
+                registerTempObstacle(tempObstacle, player);
+
+            } else if(random == 3 && !isTempObstacleUsed) {
+                // alert("renderring obstacle3 after passing obstacle2");
+                tempObstacle = createObstacle3(corners, hole3, obstacleMaterial3, "tempObstacle", scene);
+                tempObstacle.position.z = obs2;
+                isTempObstacleUsed = true;
+                registerTempObstacle(tempObstacle, player);
+
+            } else {
+                // alert("renderring obstacle2 after passing obstacle2");
+                obstacle2.position.z = obs2;
+            }
+
         } else if(Math.abs(player.position.z) > [Math.abs(obs3) + 5]) {
+
+            var random = 1 + Math.floor(Math.random() * 3);
+
             obs3 = -[(z*100)+100];
-            obstacle3.position.z = obs3;
             score++;
             z++;
+
+            if(random == 1 && !isTempObstacleUsed) {
+                // alert("renderring obstacle1 after passing obstacle3");
+                tempObstacle = createObstacle1(corners, hole1, obstacleMaterial1, "tempObstacle", scene);
+                tempObstacle.position.z = obs3;
+                isTempObstacleUsed = true;
+                registerTempObstacle(tempObstacle, player);
+
+            } else if(random == 2 && !isTempObstacleUsed) {
+                // alert("renderring obstacle2 after passing obstacle3");
+                tempObstacle = createObstacle2(corners, hole2, obstacleMaterial2, "tempObstacle", scene);
+                tempObstacle.position.z = obs3;
+                isTempObstacleUsed = true;
+                registerTempObstacle(tempObstacle, player);
+
+            } else {
+                // alert("renderring obstacle3 after passing obstacle3");
+                obstacle3.position.z = obs3;
+            }
+
         }
 
         prevPosX = player.position.x;
@@ -375,7 +479,7 @@ engine.runRenderLoop(function () {
         var style = "top:10%;left:40%;font-size:20px;background-color:#2A2F30; hover:background: #2FA2C4; width: 300px; height:100px; border-radius: 40px;";
         document.getElementById("scoreCard").style.cssText = style;
         document.getElementById("score").innerText = "Score: " + score;
-        document.getElementById("score").style.cssText = "color:#fff; padding-left:0px; font-size: 30px;position: absolute; top: 25%; left:20%";
+        document.getElementById("score").style.cssText = "color:#fff;font-size: 30px;text-align:center;";
         
     }
 
@@ -385,4 +489,3 @@ engine.runRenderLoop(function () {
 window.addEventListener("resize", function () {
     engine.resize();
 });
-

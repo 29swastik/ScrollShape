@@ -102,7 +102,7 @@ li a:hover{
     <div id="game">
 
         <div id = "scoreCard">
-            <div class="sc"  id="score" style="color:black;font-size:30px; display: block;">0</div>
+            <p class="sc" id="score" style="color:black;font-size:30px; display: block;">0</p>
         </div>
 
         <canvas id = "renderCanvas"></canvas>
@@ -114,8 +114,20 @@ li a:hover{
                 <div class="modal-content">
                     <div>
                         <ul>
-                            <li id="left-container"><a href="game.html"><p style="position: absolute; top:35%;left:33%">Restart</p></a></li>
-                            <li id="right-container"><a href="index.html"><p style="position: absolute; top:35%;left:59%">Home</p></a></li>
+                            <li id="left-container">
+                                <a href="game.html">
+                                    <div>
+                                        <p style="padding-top: 50%;text-align: center;">Restart</p>
+                                    </div>
+                                </a>
+                            </li>
+                            <li id="right-container">
+                                <a href="index.html">
+                                    <div>
+                                        <p style="padding-top: 50%;text-align: center;">Home</p>
+                                    </div>
+                                </a>
+                            </li>
                         </ul>
                     
                     </div>
