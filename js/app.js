@@ -126,7 +126,7 @@ var createScene = function () {
         new BABYLON.Vector3(6.5, 0, 10),
     ];
 
-    
+
 
     var obs1 = -30;
     var obs2 = -60;
