@@ -129,7 +129,7 @@ var createScene = function () {
 
     light.intensity = 1.5;
 
-    Ammo().then(() => {scene.enablePhysics(new BABYLON.Vector3(0,-9.81, 0), new BABYLON.AmmoJSPlugin())};
+    Ammo().then(() => {scene.enablePhysics(new BABYLON.Vector3(0,-9.81, 0), new BABYLON.AmmoJSPlugin())});
 
     var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 10, height: 50}, scene);
     ground.scaling = new BABYLON.Vector3(1, 1, -50);
